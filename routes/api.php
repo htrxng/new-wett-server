@@ -1,19 +1,26 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\API\CategoryController;
+use App\Http\Controllers\API\EmailController;
+use App\Http\Controllers\API\ProductController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+Route::get('/test', function () {
+    return response()->json(['message' => 'Laravel API is working!']);
+});
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::apiResource('categories', CategoryController::class);
+Route::prefix('products')->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+    Route::get('/outstanding', [ProductController::class, 'outstanding']);
+    Route::get('/by-category/{categoryName}', [ProductController::class, 'byCategoryName']);
+    Route::get('/{id}', [ProductController::class, 'show']);
+    Route::post('/', [ProductController::class, 'store']);
+    Route::post('/{id}', [ProductController::class, 'update']);
+    Route::delete('/{id}', [ProductController::class, 'destroy']);
+    Route::put('/{id}/mark-as-visible-on-home-page', [ProductController::class, 'markVisibleOnHomePage']);
+});
+
+Route::prefix('')->group(function () {
+    Route::post('/register-to-contact', [EmailController::class, 'registerToContact']);
 });
