@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model {
+class Post extends Model {
     use HasFactory;
 
     protected $primaryKey = 'id';
@@ -15,28 +15,17 @@ class Product extends Model {
 
     protected $fillable = [
         'id',
-        'name',
-        'category_id',
-        'short_description',
-        'description',
-        'features',
-        'details',
-        'price',
-        'photos',
-        'demo_video_url',
-        'visible_on_home_page',
+        'title',
+        'summary',
+        'content',
+        'cover_photo_url',
+        'visible_on_website',
         'active',
         'created_at',
     ];
 
     protected $casts = [
-        'photos' => 'array',
-        'visible_on_home_page' => 'boolean',
+        'visible_on_website' => 'boolean',
         'active' => 'boolean',
     ];
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class, 'category_id');
-    }
 }

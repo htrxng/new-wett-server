@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\API\FileController;
+use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\CategoryController;
 use App\Http\Controllers\API\EmailController;
 use App\Http\Controllers\API\ProductController;
@@ -21,6 +23,16 @@ Route::prefix('products')->group(function () {
     Route::put('/{id}/mark-as-visible-on-home-page', [ProductController::class, 'markVisibleOnHomePage']);
 });
 
+Route::prefix('posts')->group(function () {
+    Route::get('/', [PostController::class, 'index']);
+    Route::get('/{id}', [PostController::class, 'show']);
+    Route::get('/{id}/related', [PostController::class, 'showWithRelated']);
+    Route::post('/', [PostController::class, 'store']);
+    Route::post('/{id}', [PostController::class, 'update']);
+    Route::delete('/{id}', [PostController::class, 'destroy']);
+});
+
 Route::prefix('')->group(function () {
     Route::post('/register-to-contact', [EmailController::class, 'registerToContact']);
+    Route::post('/upload', [FileController::class, 'store']);
 });
