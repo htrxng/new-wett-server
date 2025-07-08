@@ -1,4 +1,9 @@
 <?php
+// Enable error display in the browser
+ini_set('display_errors', 1); // Show errors in the browser
+
+// Report all errors and warnings
+error_reporting(E_ALL); // Show all errors, warnings, and notices
 
 use App\Http\Controllers\API\FileController;
 use App\Http\Controllers\API\PostController;

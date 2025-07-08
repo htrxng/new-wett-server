@@ -20,6 +20,7 @@ class PostController
     public function index(): JsonResponse
     {
         $posts = Post::where('active', true)
+            ->orderBy('rank', 'asc')
             ->orderBy('created_at', 'desc')
             ->get();
         return response()->json($posts);
@@ -38,12 +39,14 @@ class PostController
         // Get the previous post (if exists), ordered by created_at in descending order
         $prePost = Post::where('active', true)
             ->where('created_at', '<', $post->created_at) // You can also use 'id' for simpler logic
+            ->orderBy('rank', 'desc')
             ->orderBy('created_at', 'desc')
             ->first();
 
         // Get the next post (if exists), ordered by created_at in ascending order
         $nextPost = Post::where('active', true)
             ->where('created_at', '>', $post->created_at)
+            ->orderBy('rank', 'desc')
             ->orderBy('created_at', 'asc')
             ->first();
 
@@ -70,6 +73,7 @@ class PostController
             'summary' => 'required|string',
             'content' => 'required|string',
             'visible_on_website' => 'boolean',
+            'rank' => 'integer',
         ]);
 
         $id = Str::slug($validated['title'], '-');
@@ -86,6 +90,7 @@ class PostController
             'content' => $validated['content'],
             'cover_photo_url' => $photos[0],
             'visible_on_website' => $validated['visible_on_website'] ?? false,
+            'rank' => $validated['rank'] ?? 1,
             'active' => true,
             'created_at' => now()->timestamp,
         ]);
@@ -102,6 +107,7 @@ class PostController
             'summary' => 'required|string',
             'content' => 'required|string',
             'visible_on_website' => 'boolean',
+            'rank' => 'integer',
         ]);
 
         $photos = [];
@@ -125,6 +131,7 @@ class PostController
             'content' => $validated['content'],
             'cover_photo_url' => $photos[0],
             'visible_on_website' => $validated['visible_on_website'] ?? false,
+            'rank' => $validated['rank'] ?? 1,
             'active' => $post->active,
         ]);
 

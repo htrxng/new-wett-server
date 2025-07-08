@@ -25,6 +25,7 @@ class Product extends Model {
         'photos',
         'demo_video_url',
         'visible_on_home_page',
+        'rank',
         'active',
         'created_at',
     ];

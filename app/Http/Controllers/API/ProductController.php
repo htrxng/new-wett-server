@@ -21,7 +21,9 @@ class ProductController extends Controller
 
     public function index(): JsonResponse
     {
-        $products = Product::where('active', true)->with('category')->get();
+        $products = Product::where('active', true)
+            ->orderBy('rank', 'asc')
+            ->with('category')->get();
         return response()->json($products);
     }
 
@@ -67,6 +69,7 @@ class ProductController extends Controller
             'price' => 'required|integer|min:0',
             'photos.*' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'visible_on_home_page' => 'boolean',
+            'rank' => 'integer',
         ]);
 
         $photos = [];
@@ -86,6 +89,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'photos' => $photos,
             'visible_on_home_page' => $validated['visible_on_home_page'] ?? false,
+            'rank' => $validated['rank'] ?? 1,
             'active' => true,
             'created_at' => now()->timestamp,
         ]);
@@ -109,6 +113,7 @@ class ProductController extends Controller
             'photos.*' => 'nullable|file|mimes:jpg,jpeg,png|max:2048',
             'existing_photos' => 'nullable|json',
             'visible_on_home_page' => 'boolean',
+            'rank' => 'integer',
         ]);
 
         $photos = [];
@@ -137,6 +142,7 @@ class ProductController extends Controller
             'price' => $validated['price'],
             'photos' => $photos,
             'visible_on_home_page' => $validated['visible_on_home_page'] ?? $product->visible_on_home_page,
+            'rank' => $validated['rank'] ?? $product->rank,
             'active' => $product->active,
         ]);
 

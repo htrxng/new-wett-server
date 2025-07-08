@@ -20,6 +20,7 @@ class Post extends Model {
         'content',
         'cover_photo_url',
         'visible_on_website',
+        'rank',
         'active',
         'created_at',
     ];
@@ -27,5 +28,6 @@ class Post extends Model {
     protected $casts = [
         'visible_on_website' => 'boolean',
         'active' => 'boolean',
+        'rank' => 'integer',
     ];
 }

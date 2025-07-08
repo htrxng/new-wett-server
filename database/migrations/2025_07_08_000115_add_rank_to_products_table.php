@@ -12,17 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->string('demo_video_url')->nullable(); // Assuming the video URL can be empty
+            $table->integer('rank')->default(0)->after('id');
         });
     }
 
     /**
-     * Run the migrations.
+     * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('demo_video_url');
+        Schema::table('posts', function (Blueprint $table) {
+            $table->dropColumn('rank');
         });
     }
 };
