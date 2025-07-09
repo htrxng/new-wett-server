@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\Post;
 use App\Models\Product;
 use App\Models\Category;
 use App\Services\CloudinaryUploader;
@@ -17,6 +18,20 @@ class ProductController extends Controller
     public function __construct(CloudinaryUploader $cloudinaryUploader)
     {
         $this->cloudinaryUploader = $cloudinaryUploader;
+    }
+
+    public function updateRank(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => 'required|string|exists:products,id',
+            'rank' => 'required|integer',
+        ]);
+
+        $post = Product::findOrFail($validated['id']);
+        $post->rank = $validated['rank'];
+        $post->save();
+
+        return response()->json($post, 200);
     }
 
     public function index(): JsonResponse

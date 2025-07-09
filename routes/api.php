@@ -26,6 +26,7 @@ Route::prefix('products')->group(function () {
     Route::post('/{id}', [ProductController::class, 'update']);
     Route::delete('/{id}', [ProductController::class, 'destroy']);
     Route::put('/{id}/mark-as-visible-on-home-page', [ProductController::class, 'markVisibleOnHomePage']);
+    Route::put('/rank', [ProductController::class, 'updateRank']);
 });
 
 Route::prefix('posts')->group(function () {
@@ -35,6 +36,7 @@ Route::prefix('posts')->group(function () {
     Route::post('/', [PostController::class, 'store']);
     Route::post('/{id}', [PostController::class, 'update']);
     Route::delete('/{id}', [PostController::class, 'destroy']);
+    Route::put('/rank', [PostController::class, 'updateRank']);
 });
 
 Route::prefix('')->group(function () {

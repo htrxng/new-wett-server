@@ -17,6 +17,20 @@ class PostController
         $this->cloudinaryUploader = $cloudinaryUploader;
     }
 
+    public function updateRank(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'id' => 'required|string|exists:posts,id',
+            'rank' => 'required|integer',
+        ]);
+
+        $post = Post::findOrFail($validated['id']);
+        $post->rank = $validated['rank'];
+        $post->save();
+
+        return response()->json($post, 200);
+    }
+
     public function index(): JsonResponse
     {
         $posts = Post::where('active', true)
