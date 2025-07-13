@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
-use App\Models\Post;
 use App\Models\Product;
 use App\Models\Category;
 use App\Services\CloudinaryUploader;
@@ -18,6 +17,21 @@ class ProductController extends Controller
     public function __construct(CloudinaryUploader $cloudinaryUploader)
     {
         $this->cloudinaryUploader = $cloudinaryUploader;
+    }
+
+    public function related(string $id): JsonResponse
+    {
+        $product = Product::where('id', $id)->firstOrFail();
+
+        $relatedProducts = Product::where('category_id', $product->category_id)
+            ->where('id', '!=', $product->id)
+            ->where('active', true)
+            ->inRandomOrder()
+            ->take(3)
+            ->with('category')
+            ->get();
+
+        return response()->json($relatedProducts);
     }
 
     public function updateRank(Request $request): JsonResponse

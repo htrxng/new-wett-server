@@ -27,6 +27,7 @@ Route::prefix('products')->group(function () {
     Route::delete('/{id}', [ProductController::class, 'destroy']);
     Route::put('/{id}/mark-as-visible-on-home-page', [ProductController::class, 'markVisibleOnHomePage']);
     Route::put('/rank', [ProductController::class, 'updateRank']);
+    Route::get('/{id}/related', [ProductController::class, 'related']);
 });
 
 Route::prefix('posts')->group(function () {
