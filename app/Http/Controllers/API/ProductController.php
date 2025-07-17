@@ -23,13 +23,10 @@ class ProductController extends Controller
     {
         $product = Product::where('id', $id)->firstOrFail();
 
-        $relatedProducts = Product::where('category_id', $product->category_id)
-            ->where('id', '!=', $product->id)
+        $relatedProducts = Product::where('id', '!=', $product->id)
             ->where('active', true)
-            ->inRandomOrder()
-            ->take(3)
-            ->with('category')
-            ->get();
+            ->orderBy('rank', 'asc')
+            ->with('category')->get();
 
         return response()->json($relatedProducts);
     }
