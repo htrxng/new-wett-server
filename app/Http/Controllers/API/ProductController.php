@@ -19,14 +19,20 @@ class ProductController extends Controller
         $this->cloudinaryUploader = $cloudinaryUploader;
     }
 
-    public function related(string $id): JsonResponse
+    public function related(string $id, Request $request): JsonResponse
     {
+        // Find the product by its ID
         $product = Product::where('id', $id)->firstOrFail();
 
+        // Get the current page number from the request, default to 1 if not provided
+        $page = $request->input('page', 1);
+
+        // Fetch the related products with pagination
         $relatedProducts = Product::where('id', '!=', $product->id)
             ->where('active', true)
             ->orderBy('rank', 'asc')
-            ->with('category')->get();
+            ->with('category')
+            ->paginate(3, ['*'], 'page', $page); // 3 items per page
 
         return response()->json($relatedProducts);
     }
@@ -98,13 +104,22 @@ class ProductController extends Controller
             'rank' => 'integer',
         ]);
 
+        $slug = Str::slug($validated['name']);
+
+        // Ensure the ID is unique
+        $count = Product::where('id', 'like', $slug . '%')->count();
+        if ($count > 0) {
+            $slug .= '-' . ($count + 1);  // Append a number to make it unique
+        }
+
+
         $photos = [];
         if ($request->hasFile('photos')) {
             $photos = $this->cloudinaryUploader->uploadFiles($request->file('photos'));
         }
 
         $product = Product::create([
-            'id' => Str::uuid()->toString(),
+            'id' => $slug,
             'name' => $validated['name'],
             'category_id' => $validated['category_id'],
             'short_description' => $validated['short_description'],
@@ -141,6 +156,18 @@ class ProductController extends Controller
             'visible_on_home_page' => 'boolean',
             'rank' => 'integer',
         ]);
+
+        // Check if name has changed and generate the new ID if needed
+        $newSlug = Str::slug($validated['name']);
+        if ($product->id !== $newSlug) {
+            // Ensure the ID is unique
+            $count = Product::where('id', 'like', $newSlug . '%')->count();
+            if ($count > 0) {
+                $newSlug .= '-' . ($count + 1);
+            }
+            // Update the product ID
+            $product->id = $newSlug;
+        }
 
         $photos = [];
         if ($request->has('existing_photos')) {

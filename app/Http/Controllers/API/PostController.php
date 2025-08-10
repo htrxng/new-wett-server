@@ -124,6 +124,15 @@ class PostController
             'rank' => 'integer',
         ]);
 
+        $newSlug = Str::slug($validated['title']);
+        if ($post->id !== $newSlug) {
+            $count = Post::where('id', 'like', $newSlug . '%')->count();
+            if ($count > 0) {
+                $newSlug .= '-' . ($count + 1);
+            }
+            $post->id = $newSlug;
+        }
+
         $photos = [];
         if ($request->has('existing_photos')) {
             $existingPhotos = json_decode($request->input('existing_photos'), true);
