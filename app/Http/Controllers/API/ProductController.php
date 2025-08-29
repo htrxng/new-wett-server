@@ -19,20 +19,14 @@ class ProductController extends Controller
         $this->cloudinaryUploader = $cloudinaryUploader;
     }
 
-    public function related(string $id, Request $request): JsonResponse
+    public function related(string $id): JsonResponse
     {
-        // Find the product by its ID
         $product = Product::where('id', $id)->firstOrFail();
 
-        // Get the current page number from the request, default to 1 if not provided
-        $page = $request->input('page', 1);
-
-        // Fetch the related products with pagination
         $relatedProducts = Product::where('id', '!=', $product->id)
             ->where('active', true)
             ->orderBy('rank', 'asc')
-            ->with('category')
-            ->paginate(3, ['*'], 'page', $page); // 3 items per page
+            ->with('category')->get();
 
         return response()->json($relatedProducts);
     }
@@ -161,7 +155,7 @@ class ProductController extends Controller
         $newSlug = Str::slug($validated['name']);
         if ($product->id !== $newSlug) {
             // Ensure the ID is unique
-            $count = Product::where('id', 'like', $newSlug . '%')->count();
+            $count = Product::where('id', '=', $newSlug)->count();
             if ($count > 0) {
                 $newSlug .= '-' . ($count + 1);
             }

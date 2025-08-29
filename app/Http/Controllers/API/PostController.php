@@ -126,7 +126,7 @@ class PostController
 
         $newSlug = Str::slug($validated['title']);
         if ($post->id !== $newSlug) {
-            $count = Post::where('id', 'like', $newSlug . '%')->count();
+            $count = Post::where('id', '=', $newSlug)->count();
             if ($count > 0) {
                 $newSlug .= '-' . ($count + 1);
             }
